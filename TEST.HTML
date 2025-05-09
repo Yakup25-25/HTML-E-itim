@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Merkezi Sterilizasyon Sistemi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #2c3e50;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #34495e;
+    }
+
+    .login-box {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .login-box input {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-box button {
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .login-box button:hover {
+      background-color: #1e8449;
+    }
+
+    .menu {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 40px;
+    }
+
+    .menu-item {
+      background-color: #3498db;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .menu-item:hover {
+      background-color: #2980b9;
+    }
+
+    .panel {
+      display: none;
+      position: relative;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      margin-top: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .panel input, .panel select {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .panel button {
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .panel button:hover {
+      background-color: #1e8449;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="girisEkrani">
+    <h1>ANKARA ŞEHİR HASTANESİ</h1>
+    <h2>MERKEZİ STERİLİZASYON ÜNİTESİ</h2>
+
+    <div class="login-box">
+      <label style="color:red; font-weight:bold;">Personel Adı</label><br>
+      <input type="text" id="personelAdi" placeholder="Adınızı girin"><br>
+
+      <label style="color:red; font-weight:bold;">Şifre</label><br>
+      <input type="password" id="sifre" placeholder="Şifrenizi girin"><br>
+
+      <button onclick="girisYap()">Giriş Yap</button>
+    </div>
+  </div>
+
+  <div class="container" id="anaMenu" style="display:none;">
+    <h1>ANKARA ŞEHİR HASTANESİ</h1>
+    <h2>MERKEZİ STERİLİZASYON ÜNİTESİ</h2>
+
+    <div class="menu" id="menuKutulari"></div>
+    <div id="paneller"></div>
+  </div>
+
+  <script>
+    const islemler = [
+      "Kirli Giriş", "Kirli Çıkış", "Yıkama Giriş", "Yıkama Çıkış",
+      "Otoklav Yükleme", "Otoklav Boşaltma", "Paketleme", "Steril Depo",
+      "Lojistik", "Dağıtım", "Malzeme Kayıt", "Personel Kayıt"
+    ];
+
+    function girisYap() {
+      const adi = document.getElementById("personelAdi").value;
+      const sifre = document.getElementById("sifre").value;
+
+      if (adi.trim() !== "" && sifre.trim() !== "") {
+        document.getElementById("girisEkrani").style.display = "none";
+        document.getElementById("anaMenu").style.display = "block";
+        menuOlustur();
+      } else {
+        alert("Lütfen personel adı ve şifre giriniz.");
+      }
+    }
+
+    function menuOlustur() {
+      const menu = document.getElementById("menuKutulari");
+      const paneller = document.getElementById("paneller");
+      menu.style.display = "grid";
+      menu.innerHTML = "";
+      paneller.innerHTML = "";
+
+      islemler.forEach((islem, index) => {
+        const id = "panel" + index;
+
+        // Menü kutusu
+        const item = document.createElement("div");
+        item.className = "menu-item";
+        item.innerText = islem;
+        item.onclick = () => {
+          document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+          document.getElementById(id).style.display = "block";
+          window.scrollTo(0, 0);
+        };
+        menu.appendChild(item);
+
+        // Panel içeriği
+        const panel = document.createElement("div");
+        panel.className = "panel";
+        panel.id = id;
+        panel.innerHTML = `
+          <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
+          <h2>${islem} Kaydı</h2>
+          <label>Personel Seçin</label>
+          <select>
+            <option>Ahmet Yılmaz</option>
+            <option>Ayşe Demir</option>
+            <option>Mehmet Çelik</option>
+          </select>
+
+          <label>Ürün Kodu</label>
+          <input type="text" placeholder="Ürün kodunu girin">
+
+          <label>Set Türü</label>
+          <select>
+            <option>Batın Seti</option>
+            <option>Acil Set</option>
+            <option>Ortopedi Seti</option>
+          </select>
+
+          <button onclick="alert('Kayıt alındı')">Kaydet</button>
+        `;
+        paneller.appendChild(panel);
+      });
+    }
+  </script>
+
+</body>
+</html>
